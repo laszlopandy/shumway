@@ -262,7 +262,7 @@ var LoaderDefinition = (function () {
           }
           return Promise.all(symbolClassesPromises);
         }
-        if (exports && !loader._isAvm2Enabled) {
+        if (exports && loader._isAvm1Enabled) {
           var exportPromises = [];
           for (var i = 0, n = exports.length; i < n; i++) {
             var asset = exports[i];
@@ -302,7 +302,7 @@ var LoaderDefinition = (function () {
             complete: frame.complete
           });
 
-          if (!loader._isAvm2Enabled) {
+          if (loader._isAvm1Enabled) {
             var avm1Context = loader._avm1Context;
 
             // Finding movie top root
@@ -419,7 +419,7 @@ var LoaderDefinition = (function () {
           root._addSoundStreamBlock(frameNum, frame.soundStreamBlock);
         }
 
-        if (!loader._isAvm2Enabled) {
+        if (loader._isAvm1Enabled) {
           var avm1Context = loader._avm1Context;
 
           if (initActionBlocks) {
@@ -727,7 +727,7 @@ var LoaderDefinition = (function () {
         }
 
         var frameScripts = { };
-        if (!this._isAvm2Enabled) {
+        if (this._isAvm1Enabled) {
           if (symbol.frameScripts) {
             var data = symbol.frameScripts;
             for (var i = 0; i < data.length; i += 2) {
@@ -811,7 +811,8 @@ var LoaderDefinition = (function () {
       loader._lastPromise = documentPromise;
       loader._vmPromise = vmPromise;
 
-      loader._isAvm2Enabled = info.fileAttributes.doAbc;
+      loader._isAvm2Enabled = info.fileAttributes.doAbc && !loaderInfo._disableAvm;
+      loader._isAvm1Enabled = !info.fileAttributes.doAbc && !loaderInfo._disableAvm;
       this._setup();
     },
     _load: function (request, checkPolicyFile, applicationDomain, securityDomain,
@@ -864,6 +865,11 @@ var LoaderDefinition = (function () {
         // HACK: bind the mouse through awful shenanigans.
         var mouseClass = avm2.systemDomain.getClass("flash.ui.Mouse");
         mouseClass._stage = stage;
+        loader._vmPromise.resolve();
+        return;
+      }
+
+      if (!loader._isAvm1Enabled) {
         loader._vmPromise.resolve();
         return;
       }

@@ -60,7 +60,7 @@ var SimpleButtonDefinition = (function () {
         }
       }
 
-      if (this._loader && !this._loader._isAvm2Enabled && s && s.buttonActions) {
+      if (this._loader && this._loader._isAvm1Enabled && s && s.buttonActions) {
         this._addEventListener("addedToStage", function (e) {
           this._initAvm1Events(s.buttonActions, 's' + s.symbolId + 'e');
         }.bind(this), false);

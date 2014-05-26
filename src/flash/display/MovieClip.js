@@ -265,7 +265,7 @@ var MovieClipDefinition = (function () {
     _gotoFrame: function gotoFrame(frameNum, execute) {
       var enterFrame = frameNum !== this._currentFrame;
 
-      if (this._allowFrameNavigation || !this._loader._isAvm2Enabled) {
+      if (this._allowFrameNavigation || this._loader._isAvm1Enabled) {
         if (enterFrame) {
           this._updateDisplayList(frameNum);
           this._enterFrame(frameNum);
@@ -286,7 +286,7 @@ var MovieClipDefinition = (function () {
           return;
         }
 
-        if (enterFrame && (execute || !this._loader._isAvm2Enabled)) {
+        if (enterFrame && (execute || this._loader._isAvm1Enabled)) {
           this._callFrame(frameNum);
         }
 

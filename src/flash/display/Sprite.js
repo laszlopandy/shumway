@@ -157,13 +157,13 @@ var SpriteDefinition = (function () {
             flash.display.Bitmap.class.instanceConstructor.call(instance, bitmapData);
           }
 
-          if (!loader._isAvm2Enabled) {
+          if (loader._isAvm1Enabled) {
             this._initAvm1Bindings(instance, name, displayListItem.events,
                                    's' + props.symbolId + 'c');
             instance._dispatchEvent("init");
             instance._dispatchEvent("construct");
             instance._needLoadEvent = true;
-          } else {
+          } else if (loader._isAvm2Enabled) {
             instance._dispatchEvent("load");
           }
 
@@ -182,7 +182,7 @@ var SpriteDefinition = (function () {
     },
     _postConstructChildren: function () {
       var loader = this._loader;
-      if (!loader || loader._isAvm2Enabled) {
+      if (!loader || !loader._isAvm1Enabled) {
         return;
       }
 
@@ -213,7 +213,7 @@ var SpriteDefinition = (function () {
       props.depth = depth;
 
       var instance = symbolClass.createAsSymbol(props);
-      if (name && loader && !loader._isAvm2Enabled &&
+      if (name && loader && loader._isAvm1Enabled &&
           !parent.asHasProperty(undefined, name, 0, false)) {
         parent.asSetPublicProperty(name, instance);
       }
@@ -225,7 +225,7 @@ var SpriteDefinition = (function () {
       children.push(instance);
 
 
-      if (!loader._isAvm2Enabled) {
+      if (loader._isAvm1Enabled) {
         parent._initAvm1Bindings(instance, name, symbolInfo && symbolInfo.events,
                                  's' + symbolInfo.symbolId + 'd');
         instance._dispatchEvent("init");
@@ -246,7 +246,7 @@ var SpriteDefinition = (function () {
       var name = child._name;
       var loader = this._loader;
       // HACK attempting to add movie clip as a variable
-      if (name && loader && !loader._isAvm2Enabled &&
+      if (name && loader && loader._isAvm1Enabled &&
           !this._getAS2Object().asHasProperty(undefined, name, 0, true)) {
         this._getAS2Object().asSetPublicProperty(name, child._getAS2Object());
       }
